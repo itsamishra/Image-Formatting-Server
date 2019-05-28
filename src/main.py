@@ -7,6 +7,7 @@ class image:
     newWidth = 0
     imageFormat = ''
     newImageFormat = ''
+
     def __init__(self):
         pass
 
@@ -17,12 +18,11 @@ def homePage():
     i = image()
     print(i.imageLink)
     return 'Go to /api/imageformat'
+    # return 'Go to /api/imageformat???'
 
 @app.route('/api/imageformat')
 def imageFormat():
     return 'image format'
-
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

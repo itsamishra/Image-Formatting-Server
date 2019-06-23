@@ -1,13 +1,15 @@
 from flask import Flask, request
 import requests
+from PIL import Image
+from io import BytesIO
 
 
-# Gets image file (in bytes) from url
+# Gets image from url and converts it to Image object
 def get_image_from_url(image_link):
-    response = requests.get(image_link, stream=True)
-    image_bytes = response.raw.data
+    response = requests.get(image_link)
+    image = Image.open(BytesIO(response.content))
 
-    return image_bytes
+    return image
 
 
 # Defines Flask app
@@ -29,8 +31,9 @@ def handle_format_image():
     if image_url == None:
         raise Exception("ERROR: 'image-url' query parameter missing")
 
-    # Loads image into memory
-    image_file = get_image_from_url(image_url)
+    # Gets image from URL
+    image = get_image_from_url(image_url)
+    
 
     return "Format Image [REPLACE LATER]"
 

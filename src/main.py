@@ -12,6 +12,15 @@ def get_image_from_url(image_link):
     return image
 
 
+# Resizes image to specified dimentions
+def resize_image(image, width, height):
+    resized_image = image.resize((width, height))
+    
+    return resized_image
+
+def save_image(image):
+    image.save("image.png")
+
 # Defines Flask app
 app = Flask(__name__)
 
@@ -33,7 +42,11 @@ def handle_format_image():
 
     # Gets image from URL
     image = get_image_from_url(image_url)
-    
+
+    # =====>>> Image format pipeline <<<=====
+    # Resize image
+
+    # Change imge formt
 
     return "Format Image [REPLACE LATER]"
 

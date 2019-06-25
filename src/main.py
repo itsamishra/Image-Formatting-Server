@@ -2,6 +2,7 @@ from flask import Flask, request
 import requests
 from PIL import Image
 from io import BytesIO
+import base64
 
 
 # Gets image from url and converts it to Image object
@@ -15,11 +16,13 @@ def get_image_from_url(image_link):
 # Resizes image to specified dimentions
 def resize_image(image, width, height):
     resized_image = image.resize((width, height))
-    
+
     return resized_image
+
 
 def save_image(image):
     image.save("image.png")
+
 
 # Defines Flask app
 app = Flask(__name__)
@@ -45,10 +48,21 @@ def handle_format_image():
 
     # =====>>> Image format pipeline <<<=====
     # Resize image
+    width = request.args.get("width")
+    height = request.args.get("height")
+    image = resize_image(image, width, height)
 
-    # Change imge formt
+    # Change image formt
 
-    return "Format Image [REPLACE LATER]"
+    
+    # Converts image to base64 string
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    image_base64_bytes = base64.b64encode(buffered.getvalue())
+    image_base64_string = image_base64_bytes.decode("utf-8")
+
+    # Returns formatted image
+    return f"""<img src="data:image;base64, {image_base64_string}" />"""
 
 
 # Runs server

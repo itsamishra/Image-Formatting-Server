@@ -15,6 +15,16 @@ def get_image_from_url(image_link):
 
 # Resizes image to specified dimentions
 def resize_image(image, width, height):
+    # if width == None:
+    #     # height = int(height)
+    #     width = int(height*(image.width/image.height))
+    # elif height == None:
+    #     # width = int(width)
+    #     height = int(width*(image.height/image.width))
+    # # else:
+    #     # height = int(height)
+    #     # width = int(width)
+
     resized_image = image.resize((width, height))
 
     return resized_image
@@ -47,14 +57,24 @@ def handle_format_image():
     image = get_image_from_url(image_url)
 
     # =====>>> Image format pipeline <<<=====
-    # Resize image
+    # Resize image (user can specify height & width, just height, or just width)
     width = request.args.get("width")
     height = request.args.get("height")
-    image = resize_image(image, width, height)
+    if width != None and height != None:
+        width = int(width)
+        height = int(height)
+        image = resize_image(image, width, height)
+    elif width == None and height != None:
+        height = int(height)
+        width = int(height * (image.width / image.height))
+        image = resize_image(image, width, height)
+    elif width != None and height == None:
+        width = int(width)
+        height = int(width * (image.height / image.width))
+        image = resize_image(image, width, height)
 
-    # Change image formt
+    # Change image format
 
-    
     # Converts image to base64 string
     buffered = BytesIO()
     image.save(buffered, format="PNG")

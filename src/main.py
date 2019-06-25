@@ -15,23 +15,13 @@ def get_image_from_url(image_link):
 
 # Resizes image to specified dimentions
 def resize_image(image, width, height):
-    # if width == None:
-    #     # height = int(height)
-    #     width = int(height*(image.width/image.height))
-    # elif height == None:
-    #     # width = int(width)
-    #     height = int(width*(image.height/image.width))
-    # # else:
-    #     # height = int(height)
-    #     # width = int(width)
-
     resized_image = image.resize((width, height))
 
     return resized_image
 
 
-def save_image(image):
-    image.save("image.png")
+def create_img_html_tag(image_base64_string):
+    return f"""<img src="data:image;base64, {image_base64_string}" />"""
 
 
 # Defines Flask app
@@ -82,7 +72,7 @@ def handle_format_image():
     image_base64_string = image_base64_bytes.decode("utf-8")
 
     # Returns formatted image
-    return f"""<img src="data:image;base64, {image_base64_string}" />"""
+    return create_img_html_tag(image_base64_string)
 
 
 # Runs server

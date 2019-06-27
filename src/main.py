@@ -33,6 +33,7 @@ def handle_home():
     return "Go to: /api/format-image"
 
 
+# Encodes image as a base64 string
 def encode_image_to_base64(image):
     buffered = BytesIO()
     image.save(buffered, format="PNG")
@@ -40,6 +41,7 @@ def encode_image_to_base64(image):
     image_base64_string = image_base64_bytes.decode("utf-8")
 
     return image_base64_string
+
 
 # Handles formate imgae api request
 @app.route("/api/format-image")
@@ -54,7 +56,9 @@ def handle_format_image():
     # Gets image from URL
     image = get_image_from_url(image_url)
 
-    # =====>>> Image format pipeline <<<=====
+    # <======================================================================>
+    # <======================= Image format pipeline ========================>
+    # <======================================================================>
     # Resize image (user can specify height & width, just height, or just width)
     width = request.args.get("width")
     height = request.args.get("height")
@@ -71,10 +75,23 @@ def handle_format_image():
         height = int(width * (image.height / image.width))
         image = resize_image(image, width, height)
 
+    # Crop image
+    left = request.args.get("left")
+    top = request.args.get("top")
+    right = request.args.get("right")
+    bottom = request.args.get("bottom")
+    if left != None and top != None and right != None and bottom != None:
+        image = image.crop((int(left), int(top), int(right), int(bottom)))
+
     # Change image format
 
     # Converts image to base64 string
     image_base64_string = encode_image_to_base64(image)
+
+    # DEBUG
+    # image.save("test.png")
+    # image.show()
+    # DEBUG
 
     # Returns formatted image
     return create_img_html_tag(image_base64_string)

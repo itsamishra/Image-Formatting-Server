@@ -33,6 +33,14 @@ def handle_home():
     return "Go to: /api/format-image"
 
 
+def encode_image_to_base64(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    image_base64_bytes = base64.b64encode(buffered.getvalue())
+    image_base64_string = image_base64_bytes.decode("utf-8")
+
+    return image_base64_string
+
 # Handles formate imgae api request
 @app.route("/api/format-image")
 def handle_format_image():
@@ -66,10 +74,7 @@ def handle_format_image():
     # Change image format
 
     # Converts image to base64 string
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    image_base64_bytes = base64.b64encode(buffered.getvalue())
-    image_base64_string = image_base64_bytes.decode("utf-8")
+    image_base64_string = encode_image_to_base64(image)
 
     # Returns formatted image
     return create_img_html_tag(image_base64_string)

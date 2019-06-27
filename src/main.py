@@ -128,16 +128,9 @@ def handle_format_image():
         for filter_name in filter_list:
             if filter_name in VALID_FILTERS:
                 image = filter_image(image, filter_name)
-                # print(filter_image(image, filter_name))
-
-        image = image.filter(ImageFilter.SHARPEN)
 
     # Converts image to base64 string
     image_base64_string = encode_image_to_base64(image)
-
-    # DEBUG
-    image.save("test.png")
-    # DEBUG
 
     # Returns formatted image
     return create_img_html_tag(image_base64_string)

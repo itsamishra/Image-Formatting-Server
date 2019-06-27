@@ -1,9 +1,22 @@
 from flask import Flask, request
 import requests
-from PIL import Image
+from PIL import Image, ImageFilter
 from io import BytesIO
 import base64
 
+
+# Constants
+VALID_FILTERS = [
+    "blur",
+    "contour",
+    "detail",
+    "edge_enhance",
+    "edge_enhance_more",
+    "emboss",
+    "sharpen",
+    "smooth",
+    "smooth_more",
+]
 
 # Gets image from url and converts it to Image object
 def get_image_from_url(image_link):
@@ -20,6 +33,31 @@ def resize_image(image, width, height):
     return resized_image
 
 
+# Filters image
+def filter_image(image, filter_name):
+    if filter_name == "blur":
+        image = image.filter(ImageFilter.BLUR)
+    elif filter_name == "contour":
+        image = image.filter(ImageFilter.CONTOUR)
+    elif filter_name == "detail":
+        image = image.filter(ImageFilter.DETAIL)
+    elif filter_name == "edge_enhance":
+        image = image.filter(ImageFilter.EDGE_ENHANCE)
+    elif filter_name == "edge_enhance_more":
+        image = image.filter(ImageFilter.EDGE_ENHANCE_MORE)
+    elif filter_name == "emboss":
+        image = image.filter(ImageFilter.EMBOSS)
+    elif filter_name == "sharpen":
+        image = image.filter(ImageFilter.SHARPEN)
+    elif filter_name == "smooth":
+        image = image.filter(ImageFilter.SMOOTH)
+    elif filter_name == "smooth_more":
+        image = image.filter(ImageFilter.SMOOTH_MORE)
+
+    return image
+
+
+# Create <img> tag from base64 encoded image string
 def create_img_html_tag(image_base64_string):
     return f"""<img src="data:image;base64, {image_base64_string}" />"""
 
@@ -83,14 +121,22 @@ def handle_format_image():
     if left != None and top != None and right != None and bottom != None:
         image = image.crop((int(left), int(top), int(right), int(bottom)))
 
-    # Change image format
+    # Filter image
+    filter_string = request.args.get("filters")
+    if filter_string != None:
+        filter_list = filter_string.lower().split(",")
+        for filter_name in filter_list:
+            if filter_name in VALID_FILTERS:
+                image = filter_image(image, filter_name)
+                # print(filter_image(image, filter_name))
+
+        image = image.filter(ImageFilter.SHARPEN)
 
     # Converts image to base64 string
     image_base64_string = encode_image_to_base64(image)
 
     # DEBUG
-    # image.save("test.png")
-    # image.show()
+    image.save("test.png")
     # DEBUG
 
     # Returns formatted image
